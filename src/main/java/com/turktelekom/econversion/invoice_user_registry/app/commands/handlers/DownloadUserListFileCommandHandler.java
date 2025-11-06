@@ -29,9 +29,7 @@ public class DownloadUserListFileCommandHandler implements RequestHandler<Downlo
 
             return Optional.of(userListFile);
         } catch (Exception exc) {
-            log.error("An error occurred while downloading the User-List File -> {}",
-                    exc.getMessage());
-
+            log.error("An error occurred while downloading the User-List File", exc);
             return Optional.empty();
         }
     }

@@ -17,6 +17,10 @@ public class UserListFileDataAdapter implements UserListFileRepository {
     @Override
     public UserListFile getLatestUserListFile() {
         var data = userListFileDataRepository.findTopByOrderByCreatedDateTimeDesc();
+        if (data == null) {
+            return null;
+        }
+
         return UserListFile.load(
                 Paths.get(data.filePath()),
                 data.checksumId(),

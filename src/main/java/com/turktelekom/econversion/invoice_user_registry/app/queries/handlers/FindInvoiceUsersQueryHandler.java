@@ -51,8 +51,7 @@ public class FindInvoiceUsersQueryHandler implements RequestHandler<FindInvoiceU
                     .map(this::mapToModelInvoiceUser)
                     .collect(Collectors.toList());
         } catch (Exception exc) {
-            log.error("An error occurred on Find Users Query handling -> {}",
-                    exc.getMessage());
+            log.error("An error occurred on Find Users Query handling", exc);
             return List.of();
         }
     }

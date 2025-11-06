@@ -49,12 +49,11 @@ public class ProcessUserListCommandHandler implements RequestHandler<ProcessUser
         invoiceUserRepository.deleteAll();
 
         Set<Integer> keys = groupedInvoiceUsers.keySet();
-        keys.parallelStream()
-                .forEach(key -> {
-                    List<InvoiceUser> invoiceUsers = groupedInvoiceUsers.get(key);
-                    if (invoiceUsers != null && !invoiceUsers.isEmpty())
-                        invoiceUserRepository.saveAll(invoiceUsers);
-                });
+        for (Integer key : keys) {
+            List<InvoiceUser> invoiceUsers = groupedInvoiceUsers.get(key);
+            if (invoiceUsers != null && !invoiceUsers.isEmpty())
+                invoiceUserRepository.saveAll(invoiceUsers);
+        }
     }
 
     @Override
@@ -77,8 +76,7 @@ public class ProcessUserListCommandHandler implements RequestHandler<ProcessUser
 
             return true;
         } catch (Exception exc) {
-            log.error("An error occurred while parsing the User-List File -> {}",
-                    exc.getMessage());
+            log.error("An error occurred while parsing the User-List File", exc);
 
             return false;
         }

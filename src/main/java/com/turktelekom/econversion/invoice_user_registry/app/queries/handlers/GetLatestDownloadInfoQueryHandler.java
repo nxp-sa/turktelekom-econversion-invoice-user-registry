@@ -24,8 +24,7 @@ public class GetLatestDownloadInfoQueryHandler implements RequestHandler<GetLate
                     latestUserListFile.getContentSize(),
                     latestUserListFile.getUsersCount());
         } catch (Exception exc) {
-            log.error("An error occurred on Get Latest Download Info Query handling -> {}",
-                    exc.getMessage());
+            log.error("An error occurred on Get Latest Download Info Query handling", exc);
             return null;
         }
     }

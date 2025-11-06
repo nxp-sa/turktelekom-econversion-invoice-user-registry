@@ -39,8 +39,7 @@ public class UserListFileParseServiceImpl implements UserListFileParseService {
             UserListRootElement root = deserializeXmlFile(userListFile.getFilePath());
             return parsingModelMapper.toDomainInvoiceUsers(root.getUsers());
         } catch (JAXBException exc) {
-            throw new IOException(String.format("An error occurred during deserialization of the User-List File -> %s",
-                    exc.getMessage()));
+            throw new IOException("An error occurred during deserialization of the User-List File", exc);
         }
     }
 }
