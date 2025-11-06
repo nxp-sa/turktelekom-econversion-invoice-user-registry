@@ -12,7 +12,7 @@ public class UserAlias {
     Date creationTime;
     Date deletionTime;
 
-    public Boolean isNotDeleted() {
+    public boolean isNotDeleted() {
         return deletionTime == null;
     }
 }
