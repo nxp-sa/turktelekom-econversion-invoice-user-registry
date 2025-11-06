@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,13 +25,14 @@ public class DefaultController {
     public ResponseEntity<LatestDownloadInfoModel> getLatestDownloadInfo() {
         var model = sender.send(new GetLatestDownloadInfoQuery());
         return model != null ? ResponseEntity.ok(model)
-                : ResponseEntity.badRequest().build();
+                : ResponseEntity.noContent().build();
     }
 
     @GetMapping("find-users")
     public ResponseEntity<List<InvoiceUserModel>> findUsers(
-            @RequestBody FindInvoiceUsersQuery query) {
-        var model = sender.send(query);
+            @RequestParam String keyword, 
+            @RequestParam FindInvoiceUsersQuery.FindOptions options) {
+        var model = sender.send(new FindInvoiceUsersQuery(keyword, options));
         return model != null ? ResponseEntity.ok(model)
                 : ResponseEntity.badRequest().build();
     }

@@ -15,10 +15,9 @@ public final class FileHelper {
     public static void checkToFileForRead(File file)
             throws IOException {
 
-        boolean flag = true;
-        flag &= file.isFile();
-        flag &= file.exists();
-        flag &= file.canRead();
+        boolean flag = file.isFile()
+                && file.exists()
+                && file.canRead();
 
         if (!flag) {
             var error = String.format("This file does not exist or is not readable. ('%s')", file.getPath());
@@ -32,6 +31,6 @@ public final class FileHelper {
                 .toAbsolutePath();
 
         if (!Files.exists(directoryPath))
-            Files.createDirectory(directoryPath);
+            Files.createDirectories(directoryPath);
     }
 }

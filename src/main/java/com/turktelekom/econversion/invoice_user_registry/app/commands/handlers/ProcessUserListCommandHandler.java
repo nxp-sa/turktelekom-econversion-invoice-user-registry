@@ -22,37 +22,18 @@ public class ProcessUserListCommandHandler implements RequestHandler<ProcessUser
     final UserListFileRepository userListFileRepository;
     final InvoiceUserRepository invoiceUserRepository;
 
-    static final int GROUP_SIZE = 64;
-
-    Hashtable<Integer, List<InvoiceUser>> getGroupedInvoiceUsers(List<InvoiceUser> invoiceUsers) {
-        Hashtable<Integer, List<InvoiceUser>> groupedInvoiceUsers = new Hashtable<>();
-
-        List<InvoiceUser> buffer;
-        for (int i = 0; i < invoiceUsers.size(); i++) {
-            var key = i % GROUP_SIZE;
-
-            buffer = groupedInvoiceUsers.get(key);
-
-            if (buffer == null)
-                buffer = new ArrayList<>();
-
-            buffer.add(invoiceUsers.get(i));
-            groupedInvoiceUsers.put(key, buffer);
-        }
-
-        return groupedInvoiceUsers;
-    }
-
     @Transactional
-    void saveChanges(UserListFile userListFile, Hashtable<Integer, List<InvoiceUser>> groupedInvoiceUsers) {
+    void saveChanges(UserListFile userListFile, List<InvoiceUser> invoiceUsers) {
         userListFileRepository.save(userListFile);
         invoiceUserRepository.deleteAll();
 
-        Set<Integer> keys = groupedInvoiceUsers.keySet();
-        for (Integer key : keys) {
-            List<InvoiceUser> invoiceUsers = groupedInvoiceUsers.get(key);
-            if (invoiceUsers != null && !invoiceUsers.isEmpty())
-                invoiceUserRepository.saveAll(invoiceUsers);
+        int chunkSize = 5000;
+        for (int i = 0; i < invoiceUsers.size(); i += chunkSize) {
+            int end = Math.min(i + chunkSize, invoiceUsers.size());
+            List<InvoiceUser> chunk = invoiceUsers.subList(i, end);
+
+            if (!chunk.isEmpty())
+                invoiceUserRepository.saveAll(chunk);
         }
     }
 
@@ -71,8 +52,7 @@ public class ProcessUserListCommandHandler implements RequestHandler<ProcessUser
 
             userListFile.updateUsersCount(invoiceUsers.size());
 
-            saveChanges(userListFile,
-                    getGroupedInvoiceUsers(invoiceUsers));
+            saveChanges(userListFile, invoiceUsers);
 
             return true;
         } catch (Exception exc) {
